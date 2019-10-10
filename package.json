@@ -1,0 +1,29 @@
+{
+  "name": "@ygunayer/patmat",
+  "version": "0.1.0",
+  "description": "An attempt at pattern matching in JavaScript",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ygunayer/patmat.git"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "mocha",
+    "example:basic": "tsc && node dist/examples/basic.js",
+    "example:async": "tsc && node dist/examples/async.js",
+    "example:regex": "tsc && node dist/examples/regex.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "4.2.0",
+    "mocha": "6.2.2",
+    "typescript": "3.6.4"
+  },
+  "dependencies": {
+    "@types/node": "12.11.1",
+    "lodash": "4.17.15"
+  }
+}
