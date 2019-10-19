@@ -16,7 +16,7 @@
     "example:regex": "tsc && node dist/examples/regex.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "chai": "4.2.0",
     "mocha": "6.2.2",

@@ -1,3 +1,5 @@
+![Version](https://img.shields.io/npm/v/@ygunayer/patmat)
+
 # patmat
 An attempt at implementing pattern matching in JavaScript.
 
