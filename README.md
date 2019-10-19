@@ -54,7 +54,7 @@ It's also imperative that this expression supports asynchronous input and output
 > **Note:** Both sync and async modules are typed too heavily to be explained here. To find out more, see the source code of each individual module: [Sync](./src/sync.ts) and [Async](./src/async.ts)
 
 ### Examples
-See the demos at [examples/](./examples) for examples. To run an example, simply run `npm run example:{exampleName}`
+See the demos at [src/examples/](./src/examples) for examples. To run an example, simply run `npm run example:{exampleName}`
 
 ## TODO
 - !!! WRITE MUCH MORE TESTS !!!
