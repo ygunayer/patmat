@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/npm/v/@ygunayer/patmat) [![Build Status](https://travis-ci.org/ygunayer/patmat.svg?branch=master)](https://travis-ci.org/ygunayer/patmat) [![Coverage Status](https://coveralls.io/repos/github/ygunayer/patmat/badge.svg)](https://coveralls.io/github/ygunayer/patmat) 
+[![Version](https://img.shields.io/npm/v/@ygunayer/patmat)](https://www.npmjs.com/package/@ygunayer/patmat) [![Build Status](https://travis-ci.org/ygunayer/patmat.svg?branch=master)](https://travis-ci.org/ygunayer/patmat) [![Coverage Status](https://coveralls.io/repos/github/ygunayer/patmat/badge.svg)](https://coveralls.io/github/ygunayer/patmat) 
 
 # patmat
 An attempt at implementing pattern matching in JavaScript.
