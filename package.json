@@ -1,6 +1,6 @@
 {
   "name": "@ygunayer/patmat",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An attempt at pattern matching in JavaScript",
   "repository": {
     "type": "git",
