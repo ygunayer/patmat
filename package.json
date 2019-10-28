@@ -1,6 +1,6 @@
 {
   "name": "@ygunayer/patmat",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An attempt at pattern matching in JavaScript",
   "repository": {
     "type": "git",
@@ -10,16 +10,23 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "mocha",
+    "test": "tsc && nyc mocha --require ts-node/register --require source-map-support/register --recursive",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "example:basic": "tsc && node dist/examples/basic.js",
     "example:async": "tsc && node dist/examples/async.js",
-    "example:regex": "tsc && node dist/examples/regex.js"
+    "example:regex": "tsc && node dist/examples/regex.js",
+    "example:es5": "tsc && node src/examples/es5.js"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "0.1.3",
     "chai": "4.2.0",
+    "coveralls": "3.0.7",
     "mocha": "6.2.2",
+    "nyc": "14.1.1",
+    "source-map-support": "0.5.13",
+    "ts-node": "8.4.1",
     "typescript": "3.6.4"
   },
   "dependencies": {

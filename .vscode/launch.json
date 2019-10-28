@@ -19,6 +19,14 @@
             "program": "${workspaceFolder}/src/examples/regex.ts",
             "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Example: Basic",
+            "program": "${workspaceFolder}/src/examples/basic.ts",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"]
         }
     ]
 }
