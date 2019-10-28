@@ -14,7 +14,7 @@ match(v1).case(
   [Point, {y: n => n < 5}, n => console.log('bar')],
   [_, n => console.log('baz')]
 );
-// prints "foo"
+// prints "bar"
 
 const max = match([4, 5]).case(
   [([a, b]) => a >= b, ([a, _]) => a],

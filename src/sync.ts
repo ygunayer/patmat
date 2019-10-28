@@ -1,23 +1,13 @@
 import * as Helpers from './helpers';
+import {SyncCase, Sync as SyncData, Predicate, SyncMatcher, SyncCaseHandle, SyncClauseLike} from './types';
 
 export module Sync {
-  export type Predicate<T> = (value: T) => boolean;
-
-  export type Handler<In, Out> = (value: In) => Out;
-  export type Result<In, Out> = Out|Handler<In, Out>;
-
-  export type ClauseLike<T> = T|Predicate<T>|Symbol|object|string|number;
-
-  export type GuardedCase<In, Out> = [ClauseLike<In>, ClauseLike<In>, Result<In, Out>];
-  export type UnguardedCase<In, Out> = [ClauseLike<In>, Result<In, Out>];
-  export type Case<In, Out> = GuardedCase<In, Out>|UnguardedCase<In, Out>;
-
-  interface MatchSpec<In, Out> {
-    match: Predicate<In>
-    result: Result<In, Out>;
-  }
-
   export module Predicate {
+    /**
+     * Combines a list of asynchronous predicates into a single async predicate.
+     * 
+     * @param preds the list of predicates
+     */
     export function combine<T>(...preds: Predicate<T>[]): Predicate<T> {
       return (value: T): boolean => {
         while (preds.length) {
@@ -30,50 +20,59 @@ export module Sync {
       }
     }
 
-    export function fromClause<T>(clause: ClauseLike<T>): Predicate<T> {
-      return (value: T) => Helpers.isMatch(value, clause);
-    }
-
-    export function toMatchSpec<In, Out>(qase: Case<In, Out>): MatchSpec<In, Out> {
-      if (qase.length == 2) {
-        const pred = qase[0];
-        const match = fromClause(pred);
-        return {match, result: qase[1]};
-      }
-
-      const clause = fromClause(qase[0]);
-      const guard = fromClause(qase[1]);
-      const match = combine(clause, guard);
-      return {match, result: qase[2]};
+    export function fromClause<T>(clause: SyncClauseLike<T>): Predicate<T> {
+      return (value: SyncData<T>) => Helpers.isMatch(value, clause);
     }
   }
 
-  function extractMatchSpecs<In, Out>(cases: Case<In, Out>[]): MatchSpec<In, Out>[] {
-    return cases.map(Predicate.toMatchSpec);
+  export function normalizeCase<In, Out>(qase: SyncCase<In, Out>): SyncCaseHandle<In, Out> {
+    if (qase.length == 2) {
+      const clause = qase[0];
+      const test = Predicate.fromClause(clause);
+      const consume = qase[1];
+      return {test, consume};
+    }
+
+    const clause = Predicate.fromClause(qase[0]);
+    const guard = Predicate.fromClause(qase[1]);
+    const consume = qase[2];
+    const test = Predicate.combine(clause, guard);
+    return {test, consume};
   }
 
-  export interface IMatcher<In, Out> {
-    case(...cases: Case<In, Out>[]): Out;
-  }
+  /**
+   * Matches the given value against the given cases and returns the result of the `consume` method of the first matched case.
+   * If no match is found, returns `undefined`, and no `consume` method is invoked
+   * 
+   * @param value the value to match
+   * @param cases the cases to match the value against
+   */
+  export function matchValue<In, Out>(value: In, cases: SyncCase<In, Out>[]): Out {
+    const normalizedCases = cases.map(normalizeCase);
 
-  export function match<Out>(value: any): IMatcher<any, Out> {
-    return {
-      case: (...cases: Case<any, Out>[]) => {
-        const specs = extractMatchSpecs(cases);
+    while (normalizedCases.length > 0) {
+      const {test, consume} = normalizedCases.splice(0, 1)[0];
 
-        while (specs.length) {
-          const spec = specs.splice(0, 1)[0];
-          const isMatch = spec.match(value);
-
-          if (isMatch) {
-            if (typeof spec.result === 'function') {
-              return (spec.result as any)(value);
-            }
-
-            return spec.result;
-          }
+      if (test(value)) {
+        if (typeof consume === 'function') {
+          return (consume as any)(value);
         }
+
+        return consume;
       }
-    };
+    }
+  }
+
+  /**
+   * Constructs a synchronous matcher for the given value.
+   * 
+   * @param value the input value
+   */
+  export function match<In, Out>(value: In): SyncMatcher<In, Out> {
+    return {
+      case: (...cases: SyncCase<In, Out>[]): Out => {
+        return Sync.matchValue<In, Out>(value, cases);
+      }
+    }
   }
 }

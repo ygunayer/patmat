@@ -13,7 +13,8 @@
     "test": "mocha",
     "example:basic": "tsc && node dist/examples/basic.js",
     "example:async": "tsc && node dist/examples/async.js",
-    "example:regex": "tsc && node dist/examples/regex.js"
+    "example:regex": "tsc && node dist/examples/regex.js",
+    "example:es5": "tsc && node src/examples/es5.js"
   },
   "author": "",
   "license": "MIT",
