@@ -11,7 +11,7 @@ const delay = async (ms: number): Promise<void> => {
   });
 };
 
-type Something = {a: Number, b: Number};
+type Something = {a: number, b: number};
 
 function generateNumber() {
   return 1 + Math.floor(Math.random() * 100);
@@ -26,8 +26,9 @@ async function doSomethingAsync(): Promise<Something> {
   };
 }
 
-async function demo() {
-  return match<Something, Something>(doSomethingAsync()).case(
+async function demo(): Promise<Something> {
+  const result = await doSomethingAsync();
+  return match<Something, Promise<Something>>(result).case(
     [
       ({a}) => a % 2 == 1,
       async result => {

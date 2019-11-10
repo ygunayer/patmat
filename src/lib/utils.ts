@@ -1,17 +1,44 @@
 import {isNumber, isString, isSymbol, isArray, isFunction, isObject} from 'lodash';
-import {_} from './index';
+import {_} from '../index';
 
 const handler = { construct() { return handler } };
 
+/**
+ * Returns whether or not the given object is a constructor.
+ * Note that ES5-style functions with a body are considered constructors.
+ * 
+ * @param x the object
+ */
 export function isConstructor(x: any) {
   try { return !!(new (new Proxy(x, handler))()); }
   catch (e) { return false }
 };
 
+/**
+ * Returns whether or not the given object is a type constructor with a prototype
+ *
+ * @param x the object
+ */
 export function isType(x: any) {
   return isConstructor(x) && (x.hasOwnProperty('prototype'));
 }
 
+/**
+ * Returns whether or not the given value matches the given expression. This expression might be one of the following:
+ * 
+ * - The catch-all symbol _ (which always matches any value)
+ * - Any scalar value
+ * - A symbol
+ * - An object (keys of which will be recursively matched against that of the original value's)
+ * - An array (not only the items will be recursively matched against, but also the length)
+ * - A regular expression
+ * - A function (considered a predicate, it will be invoked to test if the value matches)
+ * - A type constructor (either built-in such as String, Object, Number, or user-defined)
+ * - A class
+ * 
+ * @param value the value to match
+ * @param match the expression to match against
+ */
 export function isMatch(value: any, match: any): boolean {
   if (match === _) {
     return true;

@@ -1,49 +1,53 @@
-export type Sync<T> = Exclude<T, PromiseLike<T>>;
-export type Async<T> = PromiseLike<T>;
-export type MaybeAsync<T> = T|Async<T>;
-
-
+/* istanbul ignore file */
+/**
+ * Generic type for a function of signature `T => R`
+ */
 export type Fn<T, R> = (t: T) => R;
+
+/**
+ * Generic type for functions of signature `T => boolean`
+ */
 export type Predicate<T> = Fn<T, boolean>;
-export type AsyncFn<T, R> = (t: MaybeAsync<T>) => Async<R>;
-export type AsyncPredicate<T> = AsyncFn<T, boolean>;
 
-
-export type SyncResult<In, Out> = Out|Fn<In, Out>;
-export type AsyncResult<In, Out> = SyncResult<In, Out>|AsyncFn<In, Out>;
-
-
+/**
+ * Generic type for an object literal, which roughly translates to a map of `string => any`
+ */
 export type ObjectLiteral = {
   [key: string]: any;
 }
 
+/**
+ * Represents the result handle of a pattern. This can either be a scalar value or a function
+ */
+export type Result<In, Out> = Out|Fn<In, Out>;
 
-export type SyncClauseLike<T> = T|Predicate<T>|Symbol|ObjectLiteral|string|number;
-export type SyncGuardedCase<In, Out> = [SyncClauseLike<In>, SyncClauseLike<In>, SyncResult<In, Out>];
-export type SyncUnguardedCase<In, Out> = [SyncClauseLike<In>, SyncResult<In, Out>];
-export type SyncCase<In, Out> = SyncGuardedCase<In, Out>|SyncUnguardedCase<In, Out>;
+/**
+ * Represents the clause handles of a pattern
+ */
+export type ClauseLike<T> = T|Predicate<T>|Symbol|ObjectLiteral|string|number;
 
-export type AsyncClauseLike<T> = SyncClauseLike<T>|Async<T>|AsyncPredicate<T>|Async<Symbol>|Async<ObjectLiteral>|Async<string>|Async<number>;
-export type AsyncGuardedCase<In, Out> = [AsyncClauseLike<In>, AsyncClauseLike<In>, AsyncResult<In, Out>];
-export type AsyncUnguardedCase<In, Out> = [AsyncClauseLike<In>, AsyncResult<In, Out>];
-export type AsyncCase<In, Out> = SyncCase<In, Out>|AsyncGuardedCase<In, Out>|AsyncUnguardedCase<In, Out>;
+/**
+ * Represents a case with a guard clause
+ */
+export type GuardedCase<In, Out> = [ClauseLike<In>, ClauseLike<In>, Result<In, Out>];
 
+/**
+ * Represents a case with no guard clause
+ */
+export type UnguardedCase<In, Out> = [ClauseLike<In>, Result<In, Out>];
 
-export type SyncCaseHandle<In, Out> = {test: Predicate<In>, consume: SyncResult<In, Out>};
+/**
+ * Represents a case with a main clause and result handles, and optionally a guard clause
+ */
+export type Case<In, Out> = GuardedCase<In, Out>|UnguardedCase<In, Out>;
 
-export type AsyncCaseHandle<In, Out> = {test: AsyncPredicate<In>, consume: AsyncResult<In, Out>};
-
-
-export interface SyncMatcher<In, Out> {
-  case(...cases: SyncCase<In, Out>[]): Out;
-}
-
-export interface AsyncMatcher<In, Out> {
-  case(...cases: AsyncCase<In, Out>[]): Promise<Out>;
-}
-
-
-export interface MatchBuilder {
-  match<In, Out = In>(value: Sync<In>): SyncMatcher<In, Out>;
-  match<In, Out = In>(value: PromiseLike<In>): AsyncMatcher<In, Out>;
+/**
+ * Represents the type that can execute the given cases on an externally provided value
+ */
+export interface Matcher<In, Out> {
+  /**
+   * Matches the given value against the given cases and executes the result handle of the matching case.
+   * If no case is matched, returns `undefined` and does not execute any result handles.
+   */
+  case(...cases: Case<In, Out>[]): undefined|Out;
 }
