@@ -1,23 +1,12 @@
-import {Sync} from './sync';
-import {Async} from './async';
-
+/* istanbul ignore file */
 import * as Types from './types';
+import * as Patmat from './patmat';
+import * as Lib from './lib';
 
+/**
+ * A symbol that can be used as the main clause of a match case to implement catch-all behavior since patmat recognizes it
+ * Using `_` is roughly equivalent to passing a `() => true` as the main clause
+ */
 export const _ = Symbol();
-
-class PatMat implements Types.MatchBuilder {
-  match<In, Out>(value: Types.Sync<In>): Types.SyncMatcher<In, Out>;
-  match<In, Out>(value: PromiseLike<In>): Types.AsyncMatcher<In, Out>;
-  match<In, Out>(value: any): Types.SyncMatcher<In, Out>|Types.AsyncMatcher<In, Out> {
-    if (typeof value.then === 'function') {
-      return Async.match<In, Out>(value);
-    }
-
-    return Sync.match<In, Out>(value);
-  }
-}
-
-const patmat = new PatMat();
-
-export const match = patmat.match;
-export {Types, Sync, Async};
+export const match = Patmat.match;
+export {Types, Lib};

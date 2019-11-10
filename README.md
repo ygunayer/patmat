@@ -51,15 +51,23 @@ As mentioned earlier, most languages implement pattern matching as a core langua
 
 The former option is quite frankly a very bold approach, as it brings a lot of unnecessary overhead to the users of the library, and it carries the possibility of being dramatically incompatible with an official, language-level implementation that ECMA might bring in the future. As such, I opted to continue with the latter approach.
 
-It's also imperative that this expression supports asynchronous input and output, but not intermix the two, because a sync function block can't wait for the result of an asynchronous expression (without consuming a lot of CPU with a `while` block, at least). As such, the library was split into two main modules, `Sync` and `Async`, and was written in such a way that when given an asynchronous input, the result of the patmat expression also becomes a `Promise`, with case handles also becoming optionally asynchronous.
+### Asynchronous Pattern Matching
+This library was originally split into two main modules, one for sync operations and the other for async ones, with the rationale being that it's impractical to wait for an async operation in a sync block, and that it's even more impractical to represent such behavior in the type signatures.
 
-> **Note:** Both sync and async modules are typed too heavily to be explained here. To find out more, see the source code of each individual module: [Sync](./src/sync.ts) and [Async](./src/async.ts)
+This approach has been dropped in favor of an always-sync pattern matching with optionally asynchronous result handles, so it's now upto the developer to await the result of an asynchronous operation before matching a pattern against it.
+
+**Important:** Don't pass async functions to the main or guard clauses.
+
+TypeScript does prevent you from doing this, but JavaScript doesn't, and since async functions return a `Promise` instance, and this is a truthy value as far as the pattern matcher is concerned, the first case handle with async clauses will always match a given value and execute the result handle even if it shouldn't.
 
 ### Examples
 See the demos at [src/examples/](./src/examples) for examples. To run an example, simply run `npm run example:{exampleName}`
 
+## Changelog
+See [CHANGELOG.md](./CHANGELOG.md)
+
 ## TODO
-- !!! WRITE MUCH MORE TESTS !!!
+- Write more tests
 - Transformative case handles that can convert the input to an intermediate type which is then fed into the guard and the handler function. See [https://github.com/ygunayer/patmat/issues/1](https://github.com/ygunayer/patmat/issues/1)
 - More accurate types in guard clauses and handler functions. See [https://github.com/ygunayer/patmat/issues/2](https://github.com/ygunayer/patmat/issues/2)
 
