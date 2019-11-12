@@ -11,11 +11,8 @@ jobs:
       script: npm test && npm run coverage
 
     - stage: deploy
-      script: echo "Publishing package on NPM" && npm run build
       deploy:
-        provider: npm
-        email: "$NPM_EMAIL"
-        api_key: "$NPM_API_TOKEN"
-        skip_cleanup: true
+        provider: script
+        script: echo "Publishing package on NPM" && npm run publish
         on:
           tags: true
