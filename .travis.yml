@@ -9,10 +9,3 @@ jobs:
 
     - stage: coverage
       script: npm test && npm run coverage
-
-    - stage: deploy
-      deploy:
-        provider: script
-        script: echo "Publishing package on NPM" && npm run publish
-        on:
-          tags: true

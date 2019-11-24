@@ -78,11 +78,7 @@ export function isMatch(value: any, match: any): boolean {
       // however, if `match` is indeed a constructor, invoking it directly will throw an exception
       // to prevent entire match clauses from crashing the app, we attempt to capture the exception here and return false
       // as the previous `instanceof` check would've returned true if `value` really was an instance of `match` anyway
-      if (err && (err instanceof TypeError) && /cannot be invoked without \'new\'/.test(err.message)) {
-        return false;
-      }
-
-      throw err;
+      return false;
     }
   }
 
