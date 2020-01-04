@@ -1,6 +1,6 @@
 require('mocha');
 const {expect} = require('chai');
-const {fromFunction, fromStub, fromStubs, UndefinedValueError} = require('../../dist/lib/partial-function');
+const {Never, fromFunction, fromStub, fromStubs, UndefinedValueError} = require('../../dist/lib/partial-function');
 
 describe('PartialFunction', () => {
 
@@ -16,6 +16,22 @@ describe('PartialFunction', () => {
       });
 
       expect(invokeCount).to.equal(inputs.length);
+    });
+  });
+
+
+  describe('Never', () => {
+    it('should be undefined for everything and never apply', () => {
+      const values = [1, 'foo', /foo/, () => 42, {a: 4}, null, undefined];
+      values.forEach(value => {
+        expect(Never.isDefinedAt(value)).to.be.false;
+        try {
+          Never.apply(value);
+          throw new Error('Should throw error');
+        } catch (err) {
+          expect(err, err.msg).to.be.instanceOf(UndefinedValueError);
+        }
+      });
     });
   });
 
@@ -219,6 +235,7 @@ describe('PartialFunction', () => {
         expect(isApplyCalled1, 'isApplyCalled1 should be true').to.be.true;
         expect(isDefinedAtCalled2, 'isDefinedAtCalled2 should be false').to.be.false;
         expect(isApplyCalled2, 'isApplyCalled2 should be false').to.be.false;
+        expect(pf.isDefinedAt(42), `should be defined for 42`).to.be.true;
         expect(result).to.equal(420);
       });
 
@@ -248,10 +265,11 @@ describe('PartialFunction', () => {
         expect(isApplyCalled1, 'isApplyCalled1 should be false').to.be.false;
         expect(isDefinedAtCalled2, 'isDefinedAtCalled2 should be true').to.be.true;
         expect(isApplyCalled2, 'isApplyCalled2 should be true').to.be.true;
+        expect(pf.isDefinedAt(100), `should be defined for 100`).to.be.true;
         expect(result).to.equal(50);
       });
 
-      it('should throw without applying anything when both undefined', () => {
+      it('should throw without applying anything when both are undefined', () => {
         let isDefinedAtCalled1 = false;
         let isApplyCalled1 = false;
         const stub1 = {
@@ -270,6 +288,8 @@ describe('PartialFunction', () => {
         const pf2 = fromStub(stub2);
 
         const pf = pf1.orElse(pf2);
+
+        expect(pf.isDefinedAt('foo'), `should not be defined for 'foo'`).to.be.false;
 
         try {
           pf.apply('foo');
@@ -306,6 +326,8 @@ describe('PartialFunction', () => {
         expect(isDefinedAtCalled, 'isDefinedAtCalled should be true').to.be.true;
         expect(isApplyCalled, 'isApplyCalled should be true').to.be.true;
         expect(isSecondCalled, 'isSecondCalled should be true').to.be.true;
+        expect(pf.isDefinedAt(42), `should be defined for 42`).to.be.true;
+        expect(pf.isDefinedAt('foo'), `should not be defined for 'foo'`).to.be.false;
         expect(result).to.equal('foo-420');
       });
 
@@ -330,6 +352,8 @@ describe('PartialFunction', () => {
           expect(isDefinedAtCalled, 'isDefinedAtCalled should be true').to.be.true;
           expect(isApplyCalled, 'isApplyCalled should be false').to.be.false;
           expect(isSecondCalled, 'isSecondCalled should be false').to.be.false;
+          expect(pf.isDefinedAt(42), `should be defined for 42`).to.be.true;
+          expect(pf.isDefinedAt('foo'), `should not be defined for 'foo'`).to.be.false;
         }
       });
     });
@@ -364,6 +388,7 @@ describe('PartialFunction', () => {
         expect(isApplyCalled1, 'isApplyCalled1 should be true').to.be.true;
         expect(isDefinedAtCalled2, 'isDefinedAtCalled2 should be true').to.be.true;
         expect(isApplyCalled2, 'isApplyCalled2 should be true').to.be.true;
+        expect(pf.isDefinedAt(42), `should be defined for 42`).to.be.true;
         expect(result).to.equal(840);
       });
 
@@ -396,6 +421,8 @@ describe('PartialFunction', () => {
           expect(isApplyCalled1, 'isApplyCalled1 should be false').to.be.false;
           expect(isDefinedAtCalled2, 'isDefinedAtCalled2 should be false').to.be.false;
           expect(isApplyCalled2, 'isApplyCalled2 should be false').to.be.false;
+          expect(pf.isDefinedAt(42), `should be defined for 42`).to.be.true;
+          expect(pf.isDefinedAt('foo'), `should not be defined for 'foo'`).to.be.false;
         }
       });
 
@@ -418,6 +445,7 @@ describe('PartialFunction', () => {
         const pf2 = fromStub(stub2);
 
         const pf = pf1.andThen(pf2);
+        expect(pf.isDefinedAt(42), `should not be defined for 42`).to.be.false;
 
         try {
           pf.apply(42);
@@ -450,6 +478,7 @@ describe('PartialFunction', () => {
 
         expect(isDefinedAtCalled, 'isDefinedAtCalled should be true').to.be.true;
         expect(isApplyCalled, 'isApplyCalled should be true').to.be.true;
+        expect(pf.isDefinedAt(42), `should be defined for 42`).to.be.true;
         expect(result).to.equal('bar');
       });
 
@@ -467,6 +496,7 @@ describe('PartialFunction', () => {
 
         expect(isDefinedAtCalled, 'isDefinedAtCalled should be true').to.be.true;
         expect(isApplyCalled, 'isApplyCalled should be true').to.be.true;
+        expect(pf.isDefinedAt(42), `should be defined for 42`).to.be.true;
         expect(result).to.equal(null);
       });
     });

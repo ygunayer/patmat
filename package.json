@@ -11,7 +11,7 @@
   "scripts": {
     "clean": "rimraf dist/",
     "build": "npm run clean && tsc",
-    "test": "npm run build && nyc mocha --require ts-node/register --require source-map-support/register --recursive",
+    "test": "npm run build && nyc mocha --require ts-node/register --require source-map-support/register --recursive test/",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "publish": "npm test && cd dist && cp ../package*.json ./ && cp ../.npmignore ./ && npm pack && npm publish ./*.tgz",
     "example:basic": "tsc && node dist/examples/basic.js",

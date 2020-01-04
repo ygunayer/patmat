@@ -1,6 +1,6 @@
 require('mocha');
 const {expect} = require('chai');
-const {_, match} = require('../dist/index.js');
+const {_, match} = require('../dist');
 
 class Foo { constructor(a, b) { this.a = a; this.b = b; } }
 class Bar { constructor(a, b) { this.a = a; this.b = b; } }
@@ -63,8 +63,14 @@ describe('patmat', () => {
         [_, true]
       );
 
+      const result3 = match(5).case(
+        [x => x % 2 == 0, x => { throw new Error('Should not invoke guard clause'); }, false],
+        [_, true]
+      );
+
       expect(result1).to.be.true;
       expect(result2).to.be.true;
+      expect(result3).to.be.true;
     });
 
     it('should support ES5 functions and guard clauses', () => {
@@ -192,6 +198,17 @@ describe('patmat', () => {
       const result = match(new Foo('foo', 'bar')).case(
         [Foo, {a: /bar/}, false],
         [Foo, {a: /foo/}, true],
+        [_, () => { throw new Error('Should match something'); }]
+      );
+
+      expect(result).to.be.true;
+    });
+
+    it('should match arrays of exact length and structure', () => {
+      const result = match(['foo', 'bar']).case(
+        [['bar', 'foo'], false],
+        [['foo'], false],
+        [['foo', 'bar'], true],
         [_, () => { throw new Error('Should match something'); }]
       );
 

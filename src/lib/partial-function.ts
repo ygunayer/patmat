@@ -130,8 +130,8 @@ export function Combined<A, B, C>(
 ): PartialFunction<A, C> {
   return fromStub({
     isDefinedAt(value: A) {
-      if (pf.isDefinedAt(value)) {
-        return true;
+      if (!pf.isDefinedAt(value)) {
+        return false;
       }
 
       const bValue = pf.apply(value);
