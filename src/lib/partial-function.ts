@@ -1,4 +1,3 @@
-import {isFunction} from 'lodash';
 import {Fn} from '../types';
 
 /**
@@ -186,7 +185,7 @@ export function fromStub<A, B>(stub: PartialFunctionStub<A, B>): PartialFunction
     let otherwise: PartialFunction<B, C>;
     if (isPartialFunctionStubLike(fn)) {
       otherwise = (fn as PartialFunction<B, C>);
-    } else if (isFunction(fn)) {
+    } else if (typeof fn === 'function') {
       otherwise = fromFunction(fn as any);
     } else {
       otherwise = fromFunction(() => fn as C);
