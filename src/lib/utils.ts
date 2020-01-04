@@ -40,7 +40,7 @@ export function isType(x: any) {
  * @param match the expression to match against
  */
 export function isMatch(value: any, match: any): boolean {
-  if (match === _) {
+  if (match === _ || value === _) {
     return true;
   }
 
@@ -56,11 +56,11 @@ export function isMatch(value: any, match: any): boolean {
     if (match === String) {
       return isString(value);
     }
-    if (match === Object) {
-      return isObject(value);
-    }
     if (match === Number) {
       return isNumber(value);
+    }
+    if (match === Object) {
+      return isObject(value);
     }
 
     if (isType(match)) {
@@ -82,13 +82,6 @@ export function isMatch(value: any, match: any): boolean {
     }
   }
 
-  if (isObject(match)) {
-    return Object.keys(match).some(key => {
-      const matchAgainst = match[key];
-      return isMatch(value[key], matchAgainst);
-    });
-  }
-
   if (isArray(match)) {
     if (!isArray(value)) {
       return false;
@@ -99,11 +92,14 @@ export function isMatch(value: any, match: any): boolean {
     }
 
     return match.every((x, idx) => {
-      if (x === true) {
-        return true;
-      }
-
       return isMatch(value[idx], x);
+    });
+  }
+
+  if (isObject(match)) {
+    return Object.keys(match).every(key => {
+      const matchAgainst = match[key];
+      return isMatch(value[key], matchAgainst);
     });
   }
 
