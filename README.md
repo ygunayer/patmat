@@ -3,8 +3,6 @@
 # patmat
 An attempt at implementing pattern matching in JavaScript.
 
-**Note:** This project doesn't have enough tests yet, so use it at your own risk.
-
 ## What is Pattern Matching?
 Put simply, pattern matching is the act of checking whether an expression matches a certain pattern. Languages such as Rust, Scala, and Erlang implement this concepts as a core language feature, and while there is a [proposal](https://github.com/tc39/proposal-pattern-matching) to add it at some point, there's currently no such support in JavaScript.
 
